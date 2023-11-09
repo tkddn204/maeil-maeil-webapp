@@ -3,3 +3,21 @@
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom';
+
+
+if (typeof window === "undefined") {
+    const {server} = require('./dev/msw/mockServer')
+    beforeAll(() => {
+        server.listen({
+            onUnhandledRequest: 'warn',
+        })
+    })
+
+    afterEach(() => {
+        server.resetHandlers()
+    })
+
+    afterAll(() => {
+        server.close()
+    })
+}
