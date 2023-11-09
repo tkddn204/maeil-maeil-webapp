@@ -5,10 +5,18 @@ import './index.css';
 import {DevSupport} from "@react-buddy/ide-toolbox";
 import {ComponentPreviews, useInitial} from "./dev";
 
+let mockServerReady: Promise<void> = Promise.resolve();
+
+if (process.env.NODE_ENV === 'development') {
+    const {worker} = require("./dev/msw/mockBrowser");
+    mockServerReady = worker.start()
+}
+
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
 );
-root.render(
+
+mockServerReady.then(() => root.render(
     <React.StrictMode>
         <DevSupport ComponentPreviews={ComponentPreviews}
                     useInitialHook={useInitial}
@@ -16,4 +24,4 @@ root.render(
             <App/>
         </DevSupport>
     </React.StrictMode>
-);
+));
